@@ -11,10 +11,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 {
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
 		std::ofstream file;
-		std::ofstream file2;
-		int noobshit = 0;
 		file.open("RDR2_HASH_TO_ENTRYPOINTS.txt");
-		file2.open("hook all dump.txt");
 		if (!file.is_open() || !file.good()) {
 			MessageBoxA(0, "Failed to open file!", "ERROR", MB_OK);
 			return FALSE;
@@ -22,19 +19,14 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		static auto base_address = (uintptr_t)(GetModuleHandleA(0));
 		static auto get_native_address = reinterpret_cast<uintptr_t(*)(uint64_t)>(find_signature("RDR2.exe", "\x48\x8B\x15\x00\x00\x00\x00\x4C\x8B\xC9\x49\xF7\xD1\x48\xC1\xCA\x05\x48\xC1\xC2\x20", "xxx????xxxxxxxxxxxxxx"));
 		file << "static std::map<uintptr_t, DWORD> nativehash_to_address_table = {" << std::endl;
-		file2 << "uintptr_t HookAll[] = {" << std::endl;
 		for (auto native : native_dump_list)
 		{
-			noobshit += 1;
 			uintptr_t addy = get_native_address(native.hash);
 			file << "{" << std::hex << "0x" << native.hash << ", " << std::hex << "0x" << (addy - base_address) << " }, // " << native.name.c_str() << std::endl;
-			file2 <<  std::hex << "0x" << std::hex << (addy - base_address) << " + uintptr_t(GetModuleHandleA(0))" << "," << std::endl;
 		}
 
 		file << "};" << std::endl;
-		file2 << "};" << std::endl;
 		file.close();
-		file2.close();
 		MessageBoxA(0, "Dumped entrypoints to game folder, Press OK to exit.", "SUCCESS", MB_OK);
 		ExitProcess(ERROR_SUCCESS);
 	}
