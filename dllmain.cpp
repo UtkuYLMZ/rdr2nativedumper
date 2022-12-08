@@ -16,8 +16,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 			MessageBoxA(0, "Failed to open file!", "ERROR", MB_OK);
 			return FALSE;
 		}
-		static auto base_address = (uintptr_t)(GetModuleHandleA(0));
-		static auto get_native_address = reinterpret_cast<uintptr_t(*)(uint64_t)>(find_signature("RDR2.exe", "\x48\x8B\x15\x00\x00\x00\x00\x4C\x8B\xC9\x49\xF7\xD1\x48\xC1\xCA\x05\x48\xC1\xC2\x20", "xxx????xxxxxxxxxxxxxx"));
+		auto base_address = (uintptr_t)(GetModuleHandleA(0));
+		auto get_native_address = reinterpret_cast<uintptr_t(*)(uint64_t)>(find_signature("RDR2.exe", "\x48\x8B\x15\x00\x00\x00\x00\x4C\x8B\xC9\x49\xF7\xD1\x48\xC1\xCA\x05\x48\xC1\xC2\x20", "xxx????xxxxxxxxxxxxxx"));
 		file << "static std::map<uintptr_t, DWORD> nativehash_to_address_table = {" << std::endl;
 		for (auto native : native_dump_list)
 		{
